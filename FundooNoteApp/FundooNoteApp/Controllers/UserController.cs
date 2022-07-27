@@ -35,5 +35,26 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult UserLogin(UserLoginModel userLoginModel)
+        {
+            try
+            {
+                var result = iuserBL.Login(userLoginModel);
+                if (result != null)
+                {
+                    return Ok(new {success = true, message = "Login Successful", data = result});
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Login Failed" });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }
