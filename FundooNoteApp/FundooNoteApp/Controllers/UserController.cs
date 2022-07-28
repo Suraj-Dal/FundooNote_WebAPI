@@ -30,7 +30,7 @@ namespace FundooNoteApp.Controllers
                     return BadRequest(new { success = false, message = "Registration Unsuccessful"});
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 throw;
             }
@@ -51,7 +51,7 @@ namespace FundooNoteApp.Controllers
                     return BadRequest(new { success = false, message = "Login Failed" });
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 throw;
             }

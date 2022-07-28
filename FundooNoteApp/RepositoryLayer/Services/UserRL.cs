@@ -1,10 +1,15 @@
 ﻿using CommonLayer.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 
 namespace RepositoryLayer.Services
@@ -12,9 +17,12 @@ namespace RepositoryLayer.Services
     public class UserRL : IUserRL
     {
         private readonly FundooContext fundooContext;
-        public UserRL(FundooContext fundooContext)
+        private readonly IConfiguration _appSettings;
+        
+        public UserRL(FundooContext fundooContext, IConfiguration appSettings)
         {
             this.fundooContext = fundooContext;
+            _appSettings = appSettings;
         }
         public UserEntity Registration(UserRegistrationModel userRegistrationModel)
         {
@@ -37,32 +45,44 @@ namespace RepositoryLayer.Services
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 throw;
             }
         }
-        public UserLoginModel Login(UserLoginModel userLogin)
+        public string Login(UserLoginModel userLogin)
         {
             try
             {
                 var LoginResult = this.fundooContext.userEntities.Where(user => user.Email == userLogin.Email && user.PAssword == userLogin.Password).FirstOrDefault();
                 if (LoginResult != null)
                 {
-                    UserLoginModel userLoginModel = new UserLoginModel();
-                    userLoginModel.UserName = LoginResult.FirstName + " " + LoginResult.LastName;
-                    userLoginModel.Email = LoginResult.Email;
-                    userLoginModel.Password = LoginResult.PAssword;
-                    return userLoginModel;
+                    var token = GenerateSecurityToken(LoginResult.Email, LoginResult.UserId);
+                    return token;
                 }
                 else
                     return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
+        }
+        private string GenerateSecurityToken(string Email, long UserId)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings["AppSettings:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[] {
+                new Claim(ClaimTypes.Email,Email),
+                new Claim("UserId",UserId.ToString())
+            };
+            var token = new JwtSecurityToken(_appSettings["AppSettings:Key"],
+              _appSettings["AppSettings:Key"],
+              claims,
+              expires: DateTime.Now.AddMinutes(60),
+              signingCredentials: credentials);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
