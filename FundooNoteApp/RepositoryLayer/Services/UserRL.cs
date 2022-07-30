@@ -84,5 +84,46 @@ namespace RepositoryLayer.Services
               signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public string ForgetPassword(string Email)
+        {
+            try
+            {
+                var emailCheck = fundooContext.userEntities.FirstOrDefault(x => x.Email == Email);
+                if (emailCheck != null)
+                {
+                    var token = GenerateSecurityToken(emailCheck.Email, emailCheck.UserId);
+                    MSQModel msqModel = new MSQModel();
+                    msqModel.sendData2Queue(token);
+                    return token;
+                }
+                else
+                    return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool ResetPassword(string Email, string password, string confirmPassword)
+        {
+            try
+            {
+                if (password.Equals(confirmPassword))
+                {
+                    var emailCheck = fundooContext.userEntities.FirstOrDefault(x => x.Email == Email);
+                    emailCheck.PAssword = confirmPassword;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
