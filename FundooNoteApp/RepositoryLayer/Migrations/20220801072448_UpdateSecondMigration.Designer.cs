@@ -9,7 +9,7 @@ using RepositoryLayer.Context;
 
 namespace RepositoryLayer.Migrations
 {
-    [DbContext(typeof(FundooContext))]
+    [DbContext(typeof(fundooContext))]
     [Migration("20220801072448_UpdateSecondMigration")]
     partial class UpdateSecondMigration
     {

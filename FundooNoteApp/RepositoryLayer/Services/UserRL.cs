@@ -16,10 +16,10 @@ namespace RepositoryLayer.Services
 {
     public class UserRL : IUserRL
     {
-        private readonly FundooContext fundooContext;
+        private readonly fundooContext fundooContext;
         private readonly IConfiguration _appSettings;
         
-        public UserRL(FundooContext fundooContext, IConfiguration appSettings)
+        public UserRL(fundooContext fundooContext, IConfiguration appSettings)
         {
             this.fundooContext = fundooContext;
             _appSettings = appSettings;

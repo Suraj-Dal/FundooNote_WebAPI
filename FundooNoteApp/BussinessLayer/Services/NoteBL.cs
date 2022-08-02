@@ -38,5 +38,27 @@ namespace BussinessLayer.Services
                 throw;
             }
         }
+        public bool DeleteNotes(long userId, long noteId)
+        {
+            try
+            {
+                return inoteRL.DeleteNotes(userId, noteId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity UpdateNote(NoteModel noteModel, long NoteId, long userId)
+        {
+            try
+            {
+                return inoteRL.UpdateNote(noteModel, NoteId, userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

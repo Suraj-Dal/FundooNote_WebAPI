@@ -3,6 +3,7 @@ using CommonLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryLayer.Context;
 using System;
 using System.Linq;
 
@@ -57,6 +58,52 @@ namespace FundooNoteApp.Controllers
                 else
                 {
                     return BadRequest(new { success = false, message = "Cannot get notes." });
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+        [Authorize]
+        [HttpDelete]
+        [Route("DeleteNote")]
+        public IActionResult DeleteNotes(long NoteID)
+        {
+            try
+            {
+                long userID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+                var result = inoteBL.DeleteNotes(userID, NoteID);
+                if (result != false)
+                {
+                    return Ok(new { success = true, message = "Note Deleted." });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Cannot delete note." });
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+        [Authorize]
+        [HttpPut]
+        [Route("UpdateNote")]
+        public IActionResult UpdateNote(NoteModel noteModel, long NoteID)
+        {
+            try
+            {
+                long userID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+                var result = inoteBL.UpdateNote(noteModel, NoteID, userID);
+                if (result != null)
+                {
+                    return Ok(new { success = true, message = "Note Updated Successfully.", data = result });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Cannot update note." });
                 }
             }
             catch (System.Exception)

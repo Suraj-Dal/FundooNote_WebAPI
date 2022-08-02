@@ -12,10 +12,10 @@ namespace RepositoryLayer.Services
 {
     public class NoteRL : INoteRL
     {
-        private readonly FundooContext fundooContext;
+        private readonly fundooContext fundooContext;
         private readonly IConfiguration _appSettings;
 
-        public NoteRL(FundooContext fundooContext, IConfiguration appSettings)
+        public NoteRL(fundooContext fundooContext, IConfiguration appSettings)
         {
             this.fundooContext = fundooContext;
             _appSettings = appSettings;
@@ -59,8 +59,57 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var result = this.fundooContext.notesEntities.Where(x => x.UserId == userId);
+                var result = fundooContext.notesEntities.Where(id => id.UserId == userId);
                 return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool DeleteNotes(long userId, long noteId)
+        {
+            try
+            {
+
+                var result = fundooContext.notesEntities.Where(x => x.UserId == userId && x.NoteID == noteId).FirstOrDefault();
+                if (result != null)
+                {
+                    fundooContext.notesEntities.Remove(result);
+                    this.fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity UpdateNote(NoteModel noteModel, long NoteId, long userId)
+        {
+            try
+            {
+                var result = fundooContext.notesEntities.Where(note =>note.UserId == userId && note.NoteID == NoteId).FirstOrDefault();
+                if (result != null)
+                {
+                    result.Title = noteModel.Title;
+                    result.Description = noteModel.Description;
+                    result.Reminder = noteModel.Reminder;
+                    result.Updated = DateTime.Now;
+                    result.Color = noteModel.Color;
+                    result.Image = noteModel.Image;
+
+                    this.fundooContext.SaveChanges();
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception)
             {
