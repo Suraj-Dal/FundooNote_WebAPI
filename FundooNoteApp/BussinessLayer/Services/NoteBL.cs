@@ -60,5 +60,16 @@ namespace BussinessLayer.Services
                 throw;
             }
         }
+        public bool PinToDashboard(long NoteID, long userId)
+        {
+            try
+            {
+                return inoteRL.PinToDashboard(NoteID, userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

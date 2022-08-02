@@ -13,12 +13,10 @@ namespace RepositoryLayer.Services
     public class NoteRL : INoteRL
     {
         private readonly fundooContext fundooContext;
-        private readonly IConfiguration _appSettings;
 
-        public NoteRL(fundooContext fundooContext, IConfiguration appSettings)
+        public NoteRL(fundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
-            _appSettings = appSettings;
         }
         public NotesEntity CreateNote(NoteModel noteModel, long UserID)
         {
@@ -109,6 +107,30 @@ namespace RepositoryLayer.Services
                 else
                 {
                     return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool PinToDashboard(long NoteID, long userId)
+        {
+            try
+            {
+                var result = fundooContext.notesEntities.Where(x =>x.UserId == userId && x.NoteID == NoteID).FirstOrDefault();
+                
+                if (result.Pin == true)
+                {
+                    result.Pin = false;
+                    fundooContext.SaveChanges();
+                    return false;
+                }
+                else
+                {
+                    result.Pin = true;
+                    fundooContext.SaveChanges();
+                    return true;
                 }
             }
             catch (Exception)

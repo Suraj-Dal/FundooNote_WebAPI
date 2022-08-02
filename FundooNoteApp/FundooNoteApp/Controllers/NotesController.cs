@@ -11,6 +11,7 @@ namespace FundooNoteApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NotesController : ControllerBase
     {
         private readonly INoteBL inoteBL;
@@ -19,9 +20,8 @@ namespace FundooNoteApp.Controllers
             this.inoteBL = inoteBL;
         }
 
-        [Authorize]
         [HttpPost]
-        [Route("CreateNote")]
+        [Route("Create")]
         public IActionResult CreateNote(NoteModel noteModel)
         {
             try
@@ -42,9 +42,8 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
-        [Authorize]
         [HttpGet]
-        [Route("ReadNote")]
+        [Route("Read")]
         public IActionResult ReadNotes()
         {
             try
@@ -65,9 +64,8 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
-        [Authorize]
         [HttpDelete]
-        [Route("DeleteNote")]
+        [Route("Delete")]
         public IActionResult DeleteNotes(long NoteID)
         {
             try
@@ -88,9 +86,9 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
-        [Authorize]
+        
         [HttpPut]
-        [Route("UpdateNote")]
+        [Route("Update")]
         public IActionResult UpdateNote(NoteModel noteModel, long NoteID)
         {
             try
@@ -105,6 +103,29 @@ namespace FundooNoteApp.Controllers
                 {
                     return BadRequest(new { success = false, message = "Cannot update note." });
                 }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPut]
+        [Route("Pin")]
+        public IActionResult pinToDashboard(long NoteID)
+        {
+            try
+            {
+                long userID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
+                var result = inoteBL.PinToDashboard(NoteID, userID);
+                if (result == true)
+                {
+                    return Ok(new { success = true, message = "Note Pinned Successfully"});
+                }
+                else if (result == false)
+                {
+                    return Ok(new { success = true, message = "Note Unpinned successfully." });
+                }
+                return BadRequest(new { success = false, message = "Cannot perform operation." });
             }
             catch (System.Exception)
             {
