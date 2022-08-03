@@ -1,5 +1,6 @@
 ﻿using BussinessLayer.Interface;
 using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
@@ -79,6 +80,40 @@ namespace BussinessLayer.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        public bool Trash(long NoteID, long userId)
+        {
+            try
+            {
+                return inoteRL.Trash(NoteID, userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool Color(long NoteID, long userID, string color)
+        {
+            try
+            {
+                return inoteRL.Color(NoteID, userID, color);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public string Image(IFormFile image, long noteID, long userID)
+        {
+            try
+            {
+                return inoteRL.Image(image, noteID, userID);
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

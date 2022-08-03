@@ -1,4 +1,5 @@
 ﻿using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace BussinessLayer.Interface
         public NotesEntity UpdateNote(NoteModel noteModel, long NoteId, long userId);
         public bool PinToDashboard(long NoteID, long userId);
         public bool Archive(long NoteID, long userId);
+        public bool Trash(long NoteID, long userId);
+        public bool Color(long NoteID, long userID, string color);
+        public string Image(IFormFile image, long noteID, long userID);
+
 
     }
 }

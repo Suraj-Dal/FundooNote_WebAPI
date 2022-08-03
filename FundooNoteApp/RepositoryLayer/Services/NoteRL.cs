@@ -1,4 +1,7 @@
-﻿using CommonLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
@@ -13,10 +16,12 @@ namespace RepositoryLayer.Services
     public class NoteRL : INoteRL
     {
         private readonly fundooContext fundooContext;
+        private readonly IConfiguration _cloudinary;
 
-        public NoteRL(fundooContext fundooContext)
+        public NoteRL(fundooContext fundooContext, IConfiguration cloudinary)
         {
             this.fundooContext = fundooContext;
+            _cloudinary = cloudinary;
         }
         public NotesEntity CreateNote(NoteModel noteModel, long UserID)
         {
@@ -155,6 +160,84 @@ namespace RepositoryLayer.Services
                     result.Archive = true;
                     fundooContext.SaveChanges();
                     return true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool Trash(long NoteID, long userId)
+        {
+            try
+            {
+                var result = fundooContext.notesEntities.Where(x => x.UserId == userId && x.NoteID == NoteID).FirstOrDefault();
+
+                if (result.Trash == true)
+                {
+                    result.Trash = false;
+                    fundooContext.SaveChanges();
+                    return false;
+                }
+                else
+                {
+                    result.Trash = true;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool Color(long NoteID, long userID, string color)
+        {
+            try
+            {
+                var result = fundooContext.notesEntities.Where(x => x.UserId == userID && x.NoteID == NoteID).FirstOrDefault();
+                if (result != null)
+                {
+                    result.Color = color;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public string Image(IFormFile image, long noteID, long userID)
+        {
+            try
+            {
+                var result = fundooContext.notesEntities.Where(x => x.UserId == userID && x.NoteID == noteID).FirstOrDefault();
+                if (result != null)
+                {
+                    Account account = new Account(
+                        _cloudinary["CloudinarySettings:CloudName"],
+                        _cloudinary["CloudinarySettings:ApiKey"],
+                        _cloudinary["CloudinarySettings:ApiSecret"]
+                        );
+                    Cloudinary cloudinary = new Cloudinary(account);
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(image.FileName, image.OpenReadStream()),
+                    };
+                    var uploadResult = cloudinary.Upload(uploadParams);
+                    string imagePath = uploadResult.Url.ToString();
+                    result.Image = imagePath;
+                    fundooContext.SaveChanges();
+                    return "Image uploaded successfully";
+                }
+                else
+                {
+                    return null;
                 }
             }
             catch (Exception)
