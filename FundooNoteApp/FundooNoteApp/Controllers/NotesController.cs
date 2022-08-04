@@ -43,7 +43,7 @@ namespace FundooNoteApp.Controllers
             }
         }
         [HttpGet]
-        [Route("Read")]
+        [Route("Get")]
         public IActionResult ReadNotes()
         {
             try

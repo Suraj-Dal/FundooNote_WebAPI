@@ -228,6 +228,7 @@ namespace RepositoryLayer.Services
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(image.FileName, image.OpenReadStream()),
+                        PublicId = image.FileName
                     };
                     var uploadResult = cloudinary.Upload(uploadParams);
                     string imagePath = uploadResult.Url.ToString();
