@@ -25,11 +25,23 @@ namespace BussinessLayer.Services
                 throw;
             }
         }
-        public IEnumerable<CollaboratorEntity> GetCollab(long userID)
+        public CollaboratorEntity GetCollab(long userID)
         {
             try
             {
                 return iCollabRL.GetCollab(userID);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool RemoveCollab(long CollabID, long userID)
+        {
+            try
+            {
+                return iCollabRL.RemoveCollab(CollabID, userID);
             }
             catch (Exception)
             {

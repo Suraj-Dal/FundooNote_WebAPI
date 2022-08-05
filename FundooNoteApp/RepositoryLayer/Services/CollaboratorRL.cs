@@ -42,14 +42,15 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
-        public IEnumerable<CollaboratorEntity> GetCollab(long userID)
+        public CollaboratorEntity GetCollab(long userID)
         {
             try
             {
-                var result = fundooContext.collaboratorEntities.Where(x => x.UserId == userID);
-                if (result != null)
+                var Result = fundooContext.collaboratorEntities.Where(x => x.UserId == userID).FirstOrDefault();
+                
+                if (Result != null)
                 {
-                    return result;
+                    return Result;
                 }
                 else
                 {
@@ -58,6 +59,28 @@ namespace RepositoryLayer.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        public bool RemoveCollab(long CollabID, long userID)
+        {
+            try
+            {
+                var result = fundooContext.collaboratorEntities.Where(x => x.CollaboratorID == CollabID && x.UserId == userID).FirstOrDefault();
+                if (result != null)
+                {
+                    fundooContext.collaboratorEntities.Remove(result);
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
