@@ -39,6 +39,27 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        [Route("Get")]
+        public IActionResult GetLabel(long LabelID)
+        {
+            try
+            {
+                var result = iLabelBL.GetLabel(LabelID);
+                if (result != null)
+                {
+                    return Ok(new {success = true, message = "Got all Labels", data = result});
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Cannot get labels." });
+                }
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
     }
 }

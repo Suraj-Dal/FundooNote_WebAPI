@@ -25,7 +25,7 @@ namespace RepositoryLayer.Services
                     LabelEntity labelEntity = new LabelEntity();
                     labelEntity.Name = name;
                     labelEntity.NoteID = result.NoteID;
-                    labelEntity.UserId = userID;
+                    labelEntity.UserId = result.UserId;
                     fundooContext.labelEntities.Add(labelEntity);
                     fundooContext.SaveChanges();
                     return true;
@@ -38,6 +38,25 @@ namespace RepositoryLayer.Services
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+        public IEnumerable<LabelEntity> GetLabel(long labelID)
+        {
+            try
+            {
+                var result = fundooContext.labelEntities.Where(x => x.LabelID == labelID);
+                if (result != null)
+                {
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
