@@ -83,5 +83,27 @@ namespace FundooNoteApp.Controllers
                 throw;
             }
         }
+        [HttpPut]
+        [Route("Update")]
+        public IActionResult UpdateLabel(string name, long noteID)
+        {
+            try
+            {
+                var result = iLabelBL.UpdateLabel(name, noteID);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Label updated." });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Cannot update label" });
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

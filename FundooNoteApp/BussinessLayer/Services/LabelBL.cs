@@ -49,5 +49,17 @@ namespace BussinessLayer.Services
                 throw;
             }
         }
+        public bool UpdateLabel(string name, long labelID)
+        {
+            try
+            {
+                return iLabelRL.UpdateLabel(name, labelID);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
