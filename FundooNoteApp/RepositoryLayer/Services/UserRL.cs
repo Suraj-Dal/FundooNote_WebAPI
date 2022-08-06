@@ -32,7 +32,7 @@ namespace RepositoryLayer.Services
                 userEntity.FirstName = userRegistrationModel.FirstName;
                 userEntity.LastName = userRegistrationModel.LastName;
                 userEntity.Email = userRegistrationModel.Email;
-                userEntity.PAssword = userRegistrationModel.Password;
+                userEntity.PAssword = Encryption(userRegistrationModel.Password);
 
                 fundooContext.userEntities.Add(userEntity);
                 int result = fundooContext.SaveChanges();
@@ -55,8 +55,8 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var LoginResult = this.fundooContext.userEntities.Where(user => user.Email == userLogin.Email && user.PAssword == userLogin.Password).FirstOrDefault();
-                if (LoginResult != null)
+                var LoginResult = this.fundooContext.userEntities.Where(user => user.Email == userLogin.Email).FirstOrDefault();
+                if (LoginResult != null && Decryption(LoginResult.PAssword) == userLogin.Password)
                 {
                     var token = GenerateSecurityToken(LoginResult.Email, LoginResult.UserId);
                     return token;
@@ -124,6 +124,30 @@ namespace RepositoryLayer.Services
 
                 throw;
             }
+        }
+        
+        public static string Encryption(string password)
+        {
+            string Key = "secret@key#123ddsewrvFResd";
+            if (string.IsNullOrEmpty(password))
+            {   
+                return "";
+            }
+            password += Key;
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            return Convert.ToBase64String(passwordBytes);
+        }
+        public static string Decryption(string encryptedPass)
+        {
+            string Key = "secret@key#123ddsewrvFResd";
+            if (string.IsNullOrEmpty(encryptedPass))
+            {
+                return "";
+            }
+            var encodeBytes = Convert.FromBase64String(encryptedPass);
+            var result = Encoding.UTF8.GetString(encodeBytes);
+            result = result.Substring(0, result.Length - Key.Length);
+            return result;
         }
     }
 }
